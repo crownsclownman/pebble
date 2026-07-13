@@ -136,7 +136,7 @@ FIELD_DEFINITIONS = {
     # ROM1: Старший байт (Адресный движок и переходы)
     "src_addr":          {"bits": (9, 9), "value": 1},  # 0 = PC, 1 = X:Y
     "PC_INC":            {"bits": (10, 10), "value": 1},
-    "PC_RD":             {"bits": (11, 11), "value": 1}, # PC = X:Y or imm
+    "PC_RD":             {"bits": (11, 11), "value": 1},
     "PC_SRC":            {"bits": (12, 12), "value": 1}, # 0 = imm, 1 = x:y
     "IR0_READ_DBUS":     {"bits": (13, 13), "value": 1},
     "IR1_READ_DBUS":     {"bits": (14, 14), "value": 1},
