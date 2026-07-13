@@ -1,9 +1,0 @@
-page_0_start    = 0x0000
-page_0_end      = 0x0FFF
-page_0_size     = 0x1000
-
-rom_start       = 0x0000
-rom_boot_size   = 0x0100
-
-monitor_start   = 0x0100
- w

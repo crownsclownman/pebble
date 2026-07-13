@@ -281,5 +281,6 @@ unknown_cmd:
     ldi (.unknown_cmd_ret >> 8) & 0xFF
     std
     ;0x1100: return address low
+    jmp print
     .unknown_cmd_ret:
         jmp cmd_done

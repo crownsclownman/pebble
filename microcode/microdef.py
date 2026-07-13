@@ -82,6 +82,8 @@ def add_opcode(opcode, sequence):
 
 def add_ext(ext, sequence):
     EXTENSIONS[ext] = sequence
+
+
 add_opcode(0x4, [
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH + ["dst_data=1"],
@@ -149,7 +151,7 @@ add_opcode(0xC, [
 add_opcode(0xD, [
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
-    ["PC_RD", "PC_SRC=1", "upc_clr"]
+    ["PC_RD", "PC_SRC=0", "upc_clr"]
 ])
 
 # jz
@@ -192,7 +194,7 @@ add_ext(0x2, [
 add_ext(0x3, [                                  # stud
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
-    ["src_addr=2", "MEM_WE", "src_data=2", "upc_clr"]
+    ["src_addr=2", "MEM_WE", "src_data=1", "upc_clr"]
 ])
 
 add_ext(0x4, [                                  # ldud
@@ -218,14 +220,14 @@ add_ext(0x7, [                                  # cpxy
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
     ["src_data=3", "dst_data=5"],
-    ["src_data=4", "dst_data=6"]
+    ["src_data=4", "dst_data=6", "upc_clr"]
 ])
 
 add_ext(0x8, [                                  # cpuv
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
     ["src_data=3", "dst_data=5"],
-    ["src_data=4", "dst_data=6"]
+    ["src_data=4", "dst_data=6", "upc_clr"]
 ])
 
 add_ext(0x9, [                                  # incuv

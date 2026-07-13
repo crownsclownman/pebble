@@ -61,10 +61,10 @@ def build_rom(max_upc):
     for instruction in range(65536):
 
         opcode = instruction >> 12
-        imm = instruction & 0xF
 
         if opcode == 0x9:
-            seq = EXTENSIONS.get(imm)
+            ext = (instruction >> 8) & 0xF
+            seq = EXTENSIONS.get(ext)
         else:
             seq = OPCODES.get(opcode)
 
