@@ -29,6 +29,10 @@
     ;   variables:
     ;       0x1000: buf_ptr - lower byte of current input buffer position, higher byte is always 0x1
     ;       0x1001: tmp char store
+    ;       0x1100: return address low
+    ;       0x1101: return address high
+    ;       0x1102 - 0x110F: tmp1, tmp2, tmp3 ... 14
+    ;       0x1110 - 0x111F: arg1, arg2, arg3 ... arg16.
 
 init:
     ; init buf_ptr
@@ -39,6 +43,70 @@ init:
     ldi 0x02
     std
     jmp loop
+
+print:
+    ; input:
+    ;   arg1 - string ptr lower
+    ;   arg2 - string ptr high
+    
+    ;   load ptr into xy
+    ;   extract char 
+    ;   inc xy
+    ;   save xy++
+    ;   print char
+    ;   extract x++
+    ;   repeat
+    ;
+    ;
+    ;
+
+    ; XY = arg1 arg2
+    ldi 0x11
+    ldx
+    ldi 0x10
+    ldy
+
+    ldd                             ; A = ptr lo
+    mab                             ; B = ptr lo
+    incxy
+    ldd                             ; A = ptr hi
+
+    ldx                             ; X = ptr hi
+    ldi 0x00
+    add
+    ldy                             ; Y = ptr lo
+
+    ldi 0xF0
+    ldu
+
+    ldi 0x01
+    ldv
+print_loop:
+    ldd                             ; A = *XY
+
+    mab                             ; B = *XY
+    ldi 0x00
+    sub
+    jz ret                          ; if zero term - return
+
+    stud                             ; XY++
+    incxy
+    jmp print_loop
+
+ret:
+    ldi 0x11
+    ldx
+    ldi 0x00
+    ldy
+    ldd                             ; A = RA low
+    mab                             ; B = A
+    incxy                             ; X:Y++
+    ldd                             ; A = RA high
+    ldx                             ; X = RA high
+    ldi 0x00                        ; A = 0
+    add                             ; A = A + B = 0 + RA low
+    ldy                             ; Y = A
+    jnxy                            ; Jump to XY
 
 loop:
     ldi 0xF0                        ; чтение символа с клавиатуры
@@ -62,7 +130,7 @@ loop:
     std
 
                                     ; был ли нажат enter? 
-    ldi 0x0D
+    ldi 0x0A
     sub
     jz enter_pressed
 
@@ -130,9 +198,10 @@ backspace_pressed:
     sub                             ; a = index - 2
     jz loop                         ; index == 2, буфер пуст
 
-    ldd                             ; a = index
     ldi 0x01
-    sub                             ; a = index - 1
+    mab
+    ldd                             ; a = index
+    sub
     std                             ; [0x1000] = index - 1
 
     ldi 0xF0
@@ -156,19 +225,18 @@ enter_pressed:
     ldi 0x0D
     std
     ldi 0x0A
-    std                             ; \r\n
+    std                ; \r\n
     
     ldi 0x10
     ldx
     ldi 0x00
     ldy
-    ldd
-    mab
+    ldd                ; a = index
+    mab                ; b = index
     ldi 0x02
-    sub
-    jz cmd_done
-
-    jmp dispatch
+    sub                ; a = index - 2
+    jz cmd_done        ; если пусто
+    jmp dispatch       ; иначе в диспетчер
 
 cmd_done:
     ldi 0x10
@@ -176,9 +244,42 @@ cmd_done:
     ldi 0x00
     ldy
     ldi 0x02
-    std                             ; index = 1
-
+    std                ; [0x1000] = 2
     jmp loop
 
 dispatch:
-    jmp loop
+    ldi 0x10
+    ldx
+    ldi 0x01
+    ldy
+    ldd                ; a = первый символ команды
+    mab                ; b = символ
+    
+    jmp unknown_cmd
+
+unknown_cmd_str:
+    #d "Unknown Command!", 0x00
+
+unknown_cmd:
+    ldi 0x11
+    ldx
+    ldi 0x10
+    ldy
+
+    ldi (unknown_cmd_str & 0xFF)
+    std
+    incxy
+    ldi (unknown_cmd_str >> 8) & 0xFF
+    std
+
+    ldi 0x00
+    ldy
+
+    ldi (.unknown_cmd_ret & 0xFF)
+    std
+    incxy
+    ldi (.unknown_cmd_ret >> 8) & 0xFF
+    std
+    ;0x1100: return address low
+    .unknown_cmd_ret:
+        jmp cmd_done
