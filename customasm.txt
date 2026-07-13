@@ -4,12 +4,12 @@
     ; Data movement
     ; ----------------------------
 
-    ldi {imm: u8} => 0b0100 @ 0x0 @ imm`8 ; a = imm
+    ldi {imm: u8}  => 0b0100 @ 0x0 @ imm`8 ; a = imm
     ldx            => 0b0101 @ 0x000      ; x = a
     ldy            => 0b0110 @ 0x000      ; y = a
-    ldd            => 0b0111 @ 0x000      ; a = [x:y]
-    std            => 0b1000 @ 0x000      ; [x:y] = a
-    mab            => 0b1001 @ 0x000      ; b = a
+    ldd            => 0b0111 @ 0x000      ; a = [xy]
+    std            => 0b1000 @ 0x000      ; [xy] = a
+
 
     ; ----------------------------
     ; ALU
@@ -20,20 +20,28 @@
     and            => 0b0010 @ 0x000      ; a = a & b
     xor            => 0b0011 @ 0x000      ; a = a ^ b
     shr            => 0b1010 @ 0x000      ; a = a >> 1
-    inc            => 0b1011 @ 0x000      ; x:y = x:y + 1
+    incxy          => 0b1011 @ 0x000      ; xy = xy + 1
 
     ; ----------------------------
     ; Branches
     ; ----------------------------
 
     jmp {addr: u12} => 0b1100 @ addr     ; PC = (PC & 0xF000) | imm12;
-    jnxy            => 0b1101 @ 0x000    ; PC = (PC & 0xF000) | imm12;
+    jnxy            => 0b1101 @ 0x000    ; PC = xy
     jz  {addr: u12} => 0b1110 @ addr     ; PC = (PC & 0xF000) | imm12;
     jc  {addr: u12} => 0b1111 @ addr     ; PC = (PC & 0xF000) | imm12;
+	
+	; ----------------------------
+	; Extensions
+	; ----------------------------
+	mab            => 0b1001 @ 0x000      ; b = a
+	sdx			   => 0b1001 @ 0x100      ; a = x
+	sdy            => 0b1001 @ 0x200      ; a = y
+	stud           => 0b1001 @ 0x300      ; [uv] = a
+	ldud           => 0b1001 @ 0x400      ; a = [uv]
+	ldu            => 0b1001 @ 0x500      ; u = a
+	ldv            => 0b1001 @ 0x600      ; v = a
+	cpxy           => 0b1001 @ 0x700      ; uv = xy
+	cpuv           => 0b1001 @ 0x800      ; xy = uv
+	incuv          => 0b1001 @ 0x900      ; uv = uv + 1
 }
-
-ldi 0x80 
-ldx
-ldi 0x00
-ldy
-

@@ -1,0 +1,24 @@
+src_data
+    Z, a, b, x, y, u, v, alu, shr, imm8, external
+
+dst_data (a here just activates WE on A)
+    a, b, x, y, u, v
+
+src_addr
+    pc, xy, uv
+
+src_pc
+    xy, uv, imm12
+
+pc inc
+pc rd
+
+ir0 rd
+ir1 rd
+
+clk y
+clk v
+
+mem oe
+mem we
+upc clr
