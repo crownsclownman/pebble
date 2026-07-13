@@ -46,14 +46,14 @@ MICROCODE[0x9] = [
 MICROCODE[0x7] = [
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
-    ["src_addr=1", "MEM_OE", "src_data=8", "dst_data=1", "upc_clr"] # src_data=5 это external DBUS
+    ["src_addr", "MEM_OE", "src_data=8", "dst_data=1", "upc_clr"] # src_data=5 это external DBUS
 ]
 
 # 1000: std ([X:Y] = A)
 MICROCODE[0x8] = [
     FIRST_BYTE_FETCH,
     SECOND_BYTE_FETCH,
-    ["src_addr=1", "MEM_WE", "src_data=1", "upc_clr"] # dst_data=0 (None)
+    ["src_addr", "MEM_WE", "src_data=1", "upc_clr"] # dst_data=0 (None)
 ]
 
 # -------------------------------------------------------------------------
